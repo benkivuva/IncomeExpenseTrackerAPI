@@ -7,6 +7,8 @@ from rest_framework.response import Response
 import jwt
 from .models import User
 from .utils import Util
+from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import RegisterSerializer
 
 
 class RegisterView(generics.GenericAPIView):
