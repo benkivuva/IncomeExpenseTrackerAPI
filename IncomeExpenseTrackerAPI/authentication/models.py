@@ -1,9 +1,15 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.db import models
+
+# Create your models here.
+from django.contrib.auth.models import (
+    AbstractBaseUser, BaseUserManager, PermissionsMixin)
+
 from django.db import models
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class UserManager(BaseUserManager):
+
     def create_user(self, username, email, password=None):
         if username is None:
             raise TypeError('Users should have a username')
@@ -22,8 +28,12 @@ class UserManager(BaseUserManager):
         user = self.create_user(username, email, password)
         user.is_superuser = True
         user.is_staff = True
-        user.save(using=self._db)
+        user.save()
         return user
+
+
+AUTH_PROVIDERS = {'facebook': 'facebook', 'google': 'google',
+                  'twitter': 'twitter', 'email': 'email'}
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -34,6 +44,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    auth_provider = models.CharField(
+        max_length=255, blank=False,
+        null=False, default=AUTH_PROVIDERS.get('email'))
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
