@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
-#from dotenv import load_dotenv
+import datetime
 from pathlib import Path
 
 # Load environment variables from .env file
@@ -57,6 +57,11 @@ SWAGGER_SETTINGS = {
             'in': 'header'
         }
     }
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=12),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=12),
 }
 
 MIDDLEWARE = [
