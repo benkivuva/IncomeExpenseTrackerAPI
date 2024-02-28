@@ -5,7 +5,8 @@ from rest_framework.response import Response
 import datetime
 from expenses.models import Expense
 from income.models import Income
-from django.db.models import Sum
+from django.db.models import Sum, Count
+from django.db.models.functions import TruncMonth
 
 
 class ExpenseSummaryStats(APIView):
@@ -74,9 +75,11 @@ class IncomeSourceSummaryStats(APIView):
 
         return Response({'source_data': final}, status=status.HTTP_200_OK)
     
+from django.db.models import Count, F
+
 class MonthlyExpenseSummary(APIView):
     """
-    Provides a summary of the user's expenses for the current month,
+    Provides a summary of the user's expenses for each month,
     including the total amount spent, average daily expenditure,
     and breakdown of expenses by category.
     """
@@ -84,27 +87,33 @@ class MonthlyExpenseSummary(APIView):
         if not request.user.is_authenticated:
             return Response({'error': 'Authentication credentials were not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
         
-        today = datetime.date.today()
-        current_month = today.month
-        current_year = today.year
+        # Query expenses grouped by month and category
+        expense_summary = Expense.objects.filter(owner=request.user).annotate(
+            month=TruncMonth('date')
+        ).values('month', 'category').annotate(
+            total_amount=Sum('amount')
+        ).order_by('month', 'category')
         
-        first_day_of_month = datetime.date(current_year, current_month, 1)
-        last_day_of_month = datetime.date(current_year, current_month + 1, 1) - datetime.timedelta(days=1)
+        # Prepare response data
+        response_data = []
+        current_month = None
+        month_data = None
+        for item in expense_summary:
+            if item['month'] != current_month:
+                if month_data:
+                    response_data.append(month_data)
+                current_month = item['month']
+                month_data = {
+                    'month': current_month.strftime('%Y-%m'),
+                    'category_breakdown': []
+                }
+            month_data['category_breakdown'].append({
+                'category': item['category'],
+                'total_amount': item['total_amount']
+            })
         
-        expenses = Expense.objects.filter(owner=request.user, date__gte=first_day_of_month, date__lte=last_day_of_month)
-        
-        total_amount = expenses.aggregate(total_amount=Sum('amount'))['total_amount'] or 0
-        
-        days_in_month = (last_day_of_month - first_day_of_month).days + 1
-        average_daily_expenditure = total_amount / days_in_month if days_in_month > 0 else 0
-        
-        categories = expenses.values('category').annotate(total_amount=Sum('amount'))
-        category_breakdown = [{'category': category['category'], 'total_amount': category['total_amount']} for category in categories]
-        
-        response_data = {
-            'total_amount_spent': total_amount,
-            'average_daily_expenditure': average_daily_expenditure,
-            'category_breakdown': category_breakdown
-        }
+        # Append the last month data
+        if month_data:
+            response_data.append(month_data)
         
         return Response(response_data, status=status.HTTP_200_OK)
