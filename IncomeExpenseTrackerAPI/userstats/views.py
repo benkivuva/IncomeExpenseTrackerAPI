@@ -7,6 +7,7 @@ from expenses.models import Expense
 from income.models import Income
 from django.db.models import Sum, Count
 from django.db.models.functions import TruncMonth
+from dateutil.relativedelta import relativedelta
 
 
 class ExpenseSummaryStats(APIView):
@@ -157,3 +158,47 @@ class MonthlyIncomeSummary(APIView):
             response_data.append(month_data)
         
         return Response(response_data, status=status.HTTP_200_OK)
+    
+class IncomeVsExpenseComparison(APIView):
+    """
+    Compares the user's income with their expenses over a specified time period,
+    providing insights into their financial health.
+    """
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'Authentication credentials were not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        start_date = '2024-01-01'  # Hardcoded start date for January 2024
+        end_date = '2024-02-29'    # Hardcoded end date for February 2024
+        
+        try:
+            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+            end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+        except ValueError:
+            return Response({'error': 'Invalid date format. Please provide dates in the format YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Initialize an empty dictionary to store monthly income and expenses
+        monthly_comparison = {}
+        
+        # Loop through each month within the specified time period
+        current_month = start_date.replace(day=1)
+        while current_month <= end_date:
+            # Calculate the end of the current month
+            next_month = current_month + relativedelta(months=1) - datetime.timedelta(days=1)
+            
+            # Filter income and expenses for the current month
+            total_income = Income.objects.filter(owner=request.user, date__gte=current_month, date__lte=next_month).aggregate(total_income=Sum('amount'))['total_income'] or 0
+            total_expenses = Expense.objects.filter(owner=request.user, date__gte=current_month, date__lte=next_month).aggregate(total_expenses=Sum('amount'))['total_expenses'] or 0
+            
+            # Store the monthly comparison in the dictionary
+            month_key = current_month.strftime('%Y-%m')
+            monthly_comparison[month_key] = {
+                'total_income': total_income,
+                'total_expenses': total_expenses,
+                'difference': total_income - total_expenses
+            }
+            
+            # Move to the next month
+            current_month += relativedelta(months=1)
+        
+        return Response(monthly_comparison, status=status.HTTP_200_OK)
