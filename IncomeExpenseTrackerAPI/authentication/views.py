@@ -167,11 +167,12 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
     
 class LogoutAPIView(generics.GenericAPIView):
     serializer_class = LogoutSerializer
-
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
-
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        # Return a response indicating successful logout
+        return Response({'message': 'Logged out successfully'})
