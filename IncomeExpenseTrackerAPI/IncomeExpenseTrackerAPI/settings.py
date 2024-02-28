@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'income',
     'corsheaders',
     'authentication',
-    'userstats'
+    'userstats',
+    'socialauth'
 ]
 
 SWAGGER_SETTINGS = {
