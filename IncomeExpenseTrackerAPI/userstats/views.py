@@ -117,3 +117,43 @@ class MonthlyExpenseSummary(APIView):
             response_data.append(month_data)
         
         return Response(response_data, status=status.HTTP_200_OK)
+    
+class MonthlyIncomeSummary(APIView):
+    """
+    Provides a summary of the user's income for each month,
+    including the total amount earned and breakdown of income by source.
+    """
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'Authentication credentials were not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        # Query income grouped by month and source
+        income_summary = Income.objects.filter(owner=request.user).annotate(
+            month=TruncMonth('date')
+        ).values('month', 'source').annotate(
+            total_amount=Sum('amount')
+        ).order_by('month', 'source')
+        
+        # Prepare response data
+        response_data = []
+        current_month = None
+        month_data = None
+        for item in income_summary:
+            if item['month'] != current_month:
+                if month_data:
+                    response_data.append(month_data)
+                current_month = item['month']
+                month_data = {
+                    'month': current_month.strftime('%Y-%m'),
+                    'source_breakdown': []
+                }
+            month_data['source_breakdown'].append({
+                'source': item['source'],
+                'total_amount': item['total_amount']
+            })
+        
+        # Append the last month data
+        if month_data:
+            response_data.append(month_data)
+        
+        return Response(response_data, status=status.HTTP_200_OK)
