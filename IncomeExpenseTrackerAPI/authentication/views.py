@@ -28,6 +28,14 @@ class CustomRedirect(HttpResponsePermanentRedirect):
 
 
 class RegisterView(generics.GenericAPIView):
+     """
+    View for handling user registration.
+
+    This class-based view handles the registration of new users by accepting POST requests
+    containing user data, validating it using the RegisterSerializer, and saving the user
+    to the database. It then generates an email verification token and sends an email to
+    the user with a link for email verification.
+    """
     serializer_class = RegisterSerializer
     renderer_classes = (UserRenderer,)
 
