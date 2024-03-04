@@ -28,7 +28,7 @@ class CustomRedirect(HttpResponsePermanentRedirect):
 
 
 class RegisterView(generics.GenericAPIView):
-     """
+    """
     View for handling user registration.
 
     This class-based view handles the registration of new users by accepting POST requests
