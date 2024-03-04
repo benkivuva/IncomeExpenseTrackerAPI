@@ -8,7 +8,7 @@ class ExpenseModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         # Create a user for testing
-        cls.user = User.objects.create_user(username='testuser', password='testpassword')
+        cls.user = User.objects.create_user(username='testuser', email='test@example.com', password='testpassword')
 
         # Create an expense for testing
         cls.expense = Expense.objects.create(
@@ -53,4 +53,4 @@ class ExpenseModelTest(TestCase):
 
     def test_str_method(self):
         expense = Expense.objects.get(id=self.expense.id)
-        self.assertEqual(str(expense), f"{self.user}'s income")
+        self.assertEqual(str(expense), f"{self.user}s income")
