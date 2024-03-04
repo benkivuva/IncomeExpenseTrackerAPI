@@ -1,0 +1,36 @@
+[run]
+# Directory where coverage data will be stored
+data_file = .coverage
+
+# Directories to include in coverage analysis
+source =
+    authentication
+    income
+    expenses
+    userstats
+
+# Additional files or directories to include in coverage analysis
+include =
+    manage.py
+
+# Directories or files to exclude from coverage analysis
+omit =
+    */migrations/*
+    venv/*
+    */tests/*
+
+[report]
+# Output coverage report in HTML format
+# Uncomment the next line to enable HTML report
+html_coverage = true
+
+# Omit coverage report for unexecuted files
+# skip_empty = true
+
+# Omit coverage report for files with 0% coverage
+# skip_covered = true
+
+# Specify the type of coverage report to generate
+# Options: html, xml, annotate, term, term-missing
+# Uncomment the next line to specify a different report format
+report = html
