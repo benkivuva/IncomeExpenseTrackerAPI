@@ -1,0 +1,10 @@
+{
+    "dev": {
+        "aws_region": "us-east-1",
+        "django_settings": "IncomeExpenseTrackerAPI.settings",
+        "profile_name": "default",
+        "project_name": "incomeexpensetr",
+        "runtime": "python3.10",
+        "s3_bucket": "zappa-t0ox5wkl2"
+    }
+}
