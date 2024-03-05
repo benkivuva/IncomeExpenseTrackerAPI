@@ -7,6 +7,11 @@ from .permissions import IsOwner
 
 
 class IncomeListAPIView(ListCreateAPIView):
+    """
+    View for listing and creating income records.
+
+    This view allows authenticated users to list their income records and create new income entries.
+    """
     serializer_class = IncomeSerializer
     queryset = Income.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
@@ -19,6 +24,12 @@ class IncomeListAPIView(ListCreateAPIView):
 
 
 class IncomeDetailAPIView(RetrieveUpdateDestroyAPIView):
+    """
+    View for retrieving, updating, and deleting individual income records.
+
+    This view allows authenticated users who are the owners of the income record to retrieve, update,
+    and delete their own income records.
+    """
     serializer_class = IncomeSerializer
     permission_classes = (permissions.IsAuthenticated, IsOwner,)
     queryset = Income.objects.all()

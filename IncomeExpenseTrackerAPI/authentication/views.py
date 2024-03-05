@@ -62,6 +62,11 @@ class RegisterView(generics.GenericAPIView):
 
 
 class VerifyEmail(views.APIView):
+    """
+    View for verifying user email.
+
+    Decodes the email verification token and marks the user as verified in the database.
+    """
     serializer_class = EmailVerificationSerializer
 
     token_param_config = openapi.Parameter(
@@ -101,6 +106,11 @@ class VerifyEmail(views.APIView):
 
 
 class LoginAPIView(generics.GenericAPIView):
+    """
+    View for user login.
+
+    Accepts POST requests containing login credentials, validates them, and returns a JWT if credentials are correct.
+    """
     serializer_class = LoginSerializer
 
     def post(self, request):
@@ -109,6 +119,11 @@ class LoginAPIView(generics.GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class RequestPasswordResetEmail(generics.GenericAPIView):
+    """
+    View for requesting a password reset email.
+
+    Accepts POST requests containing user email and sends a password reset email to the user.
+    """
     serializer_class = ResetPasswordEmailRequestSerializer
 
     def post(self, request):
@@ -135,6 +150,11 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
         return Response({'success': 'We have sent you a link to reset your password'}, status=status.HTTP_200_OK)
     
 class PasswordTokenCheckAPI(generics.GenericAPIView):
+    """
+    View for checking password reset token validity.
+
+    Validates the password reset token sent via email and redirects the user to the password reset page if valid.
+    """
     serializer_class = SetNewPasswordSerializer
 
     def get(self, request, uidb64, token):
@@ -166,6 +186,11 @@ class PasswordTokenCheckAPI(generics.GenericAPIView):
 
 
 class SetNewPasswordAPIView(generics.GenericAPIView):
+    """
+    View for setting a new password.
+
+    Accepts PATCH requests containing a new password and updates the user's password in the database.
+    """
     serializer_class = SetNewPasswordSerializer
 
     def patch(self, request):
@@ -174,6 +199,11 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
         return Response({'success': True, 'message': 'Password reset success'}, status=status.HTTP_200_OK)
     
 class LogoutAPIView(generics.GenericAPIView):
+    """
+    View for user logout.
+
+    Accepts POST requests to invalidate the user's refresh token, effectively logging them out.
+    """
     serializer_class = LogoutSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
