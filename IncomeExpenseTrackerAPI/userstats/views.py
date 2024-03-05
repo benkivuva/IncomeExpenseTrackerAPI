@@ -13,6 +13,7 @@ from dateutil.relativedelta import relativedelta
 class ExpenseSummaryStats(APIView):
 
     def get_amount_for_category(self, expense_list, category):
+        """Retrieves the total expenses for each category over the past year."""
         expenses = expense_list.filter(category=category)
         amount = 0
         for expense in expenses:
@@ -44,7 +45,7 @@ class ExpenseSummaryStats(APIView):
         return Response({'category_data': final}, status=status.HTTP_200_OK)
     
 class IncomeSourceSummaryStats(APIView):
-
+    """Retrieves the total expenses for each category over the past year."""
     def get_amount_for_source(self, income_list, source):
         incomes = income_list.filter(source=source)
         amount = 0
