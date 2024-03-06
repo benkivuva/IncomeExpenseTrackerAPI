@@ -26,7 +26,7 @@ The Income & Expenses Tracking API is a versatile tool designed to simplify budg
 3. Change directory to the cloned repository:
 
    ```bash
-   cd IncomeExpenseTrackerAPI/IncomeExpenseTrackerAPI
+   cd IncomeExpenseTrackerAPI
    ```
 
 4. Create a virtual environment using `virtualenv`:
@@ -58,13 +58,13 @@ The Income & Expenses Tracking API is a versatile tool designed to simplify budg
 7. Migrate existing database tables:
 
    ```bash
-   python manage.py migrate
+   python IncomeExpenseTrackerAPI/manage.py migrate
    ```
 
 8. Run the Django development server:
 
    ```bash
-   python manage.py runserver
+   python IncomeExpenseTrackerAPI/manage.py runserver
    ```
 
 9. Access the Swagger documentation:
