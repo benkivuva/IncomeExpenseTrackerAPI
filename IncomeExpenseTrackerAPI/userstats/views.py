@@ -170,7 +170,7 @@ class IncomeVsExpenseComparison(APIView):
             return Response({'error': 'Authentication credentials were not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
         
         start_date = '2024-01-01'  # Hardcoded start date for January 2024
-        end_date = '2024-02-29'    # Hardcoded end date for February 2024
+        end_date = '2024-03-31'    # Hardcoded end date for March 2024
         
         try:
             start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')

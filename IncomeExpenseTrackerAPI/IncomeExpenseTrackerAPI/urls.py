@@ -23,7 +23,7 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Expenses API",
+      title="Expenses and Income Tracker API",
       default_version='v1',
       description="A versatile API for recording and managing income and expenses",
       terms_of_service="https://www.ourapp.com/policies/terms/",
